@@ -15,7 +15,8 @@ public class Ara {
     public static final int GRAVITY = 14;
     public static final int SPEED = 10;
 
-    private ImageView list [] = new ImageView[11];
+    private ImageView imagesStaticRight[] = new ImageView[11];
+    private ImageView imagesRunRight[] = new ImageView[8];
     private ImageView last;
     private boolean grounded;
     private double x;
@@ -51,33 +52,55 @@ public class Ara {
     }
 
     public void loadAra(Pane pane) throws FileNotFoundException {
-        for(AraMouvement ara : AraMouvement.values()){
-            list[idx] = new ImageView(new Image( new FileInputStream("./resources/assets/ara/"+ara.getImage()), X_SIZE*Main.SCREEN_RATIO*(1-REDUCTION), Y_SIZE*Main.SCREEN_RATIO*(1-REDUCTION),false,false));
-            list[idx].setX(x);
-            list[idx++].setY(y);
+        for(AraStaticRight ara : AraStaticRight.values()){
+            imagesStaticRight[idx] = new ImageView(new Image( new FileInputStream("./resources/assets/ara/"+ara.getImage()), X_SIZE*Main.SCREEN_RATIO*(1-REDUCTION), Y_SIZE*Main.SCREEN_RATIO*(1-REDUCTION),false,false));
+            imagesStaticRight[idx].setX(x);
+            imagesStaticRight[idx++].setY(y);
         }
         idx = 0;
-        last = list[0];
+
+        for(AraRunRight ara : AraRunRight.values()){
+            imagesRunRight[idx] = new ImageView(new Image( new FileInputStream("./resources/assets/ara/"+ara.getImage()), X_SIZE*Main.SCREEN_RATIO*(1-REDUCTION), Y_SIZE*Main.SCREEN_RATIO*(1-REDUCTION),false,false));
+            imagesRunRight[idx].setX(x);
+            imagesRunRight[idx++].setY(y);
+        }
+        idx = 0;
+        last = imagesRunRight[0];
+//        last = imagesStaticRight[0];
         pane.getChildren().add(last);
     }
 
     public void animateAra(Pane pane) {
-        //Animation
+        runRight(pane);
+//        staticRight(pane);
+    }
+
+    private void changeImage(Pane pane, ImageView [] list) {
+        pane.getChildren().remove(last);
+        last = list[idx];
+        last.setX(x);
+        last.setY(y);
+        pane.getChildren().add(last);
+    }
+
+    private void staticRight(Pane pane) {
         if(wait>45) {
             idx++;
-            if (idx == 11)
+            if (idx == imagesStaticRight.length)
                 idx = 0;
             if (idx == 0) {
                 wait = 0;
             }
         }
         wait++;
-        //Change Image
-        pane.getChildren().remove(last);
-        last = list[idx];
-        last.setX(x);
-        last.setY(y);
-        pane.getChildren().add(last);
+        changeImage(pane, imagesStaticRight);
+    }
+
+    private void runRight(Pane pane) {
+        idx++;
+        if (idx == imagesRunRight.length)
+            idx = 0;
+        changeImage(pane, imagesRunRight);
     }
 
 }
