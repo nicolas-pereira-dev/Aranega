@@ -19,11 +19,9 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class Main extends Application{
-    final int SCREEN_RATIO = 3;
+    static final int SCREEN_RATIO = 3;
     int x = 0;
     int y = 0;
-    int idx = 0;
-    int wait = 0;
 
     public static void main (String args []) {
         Application.launch(args);
@@ -31,7 +29,11 @@ public class Main extends Application{
 
     public void start(Stage stage) throws Exception {
         Pane pane = new Pane();
-        loadLevel("level1", pane);
+        TextureLoader txl = new TextureLoader();
+        Ara ara = new Ara(348, 59);
+
+        txl.loadLevel("level1", pane);
+        ara.loadAra(pane);
 
         Scene scene = new Scene(pane);
 
@@ -44,16 +46,6 @@ public class Main extends Application{
             System.exit(0);
         });
 
-        ImageView list [] = new ImageView[11];
-        x = 148;
-        y = 240;
-        for(AraMouvement ara : AraMouvement.values()){
-            list[idx] = new ImageView(new Image( new FileInputStream("./resources/assets/ara/"+ara.getImage()), 24*SCREEN_RATIO, 32*SCREEN_RATIO,false,false));
-            list[idx].setX(x);
-            list[idx++].setY(y);
-        }
-        idx = 0;
-        pane.getChildren().add(list[0]);
 
         //Timer
         Timer fall = new Timer();
@@ -62,57 +54,14 @@ public class Main extends Application{
                 Platform.runLater(new Runnable() {
                     public void run() {
 //                      play(platformFile, pane, doodle);
-                        if(wait>30) {
-                            pane.getChildren().remove(list[idx]);
-                            pane.getChildren().add(list[(idx + 1) % 11]);
-                            idx++;
-                            if (idx == 11)
-                                idx = 0;
-                            if (idx == 1) {
-                                wait = 0;
-                            }
-                        }
-                        wait++;
+                        ara.gravity(txl);
+                        ara.animateAra(pane);
                     }
                 });
             }
         };
         fall.schedule(task, 0, 80);
 
-    }
-
-    private void loadLevel(String name, Pane pane) throws Exception {
-        pane.setBackground(new Background(new BackgroundFill(Color.web("322B28"), null, null)));
-
-        File level1 = new File("./resources/"+name);
-        BufferedReader br = new BufferedReader( new FileReader(level1));
-        String line;
-        while ((line = br.readLine()) != null){
-            String [] textures = line.split(";");
-            for(String texture : textures){
-                int id = Integer.parseInt(texture.split("x")[0]);
-                int nbr = Integer.parseInt(texture.split("x")[1]);
-                for(int i=0; i<nbr; i++){
-                    if(id!=-1) {
-                        Texture t = Texture.values()[id];
-                        pane.getChildren().add(loadImage(t));
-                        x += t.getX() * SCREEN_RATIO;
-                    }else{
-                        x += 8 * SCREEN_RATIO;
-                    }
-                }
-            }
-            x=0;
-            y+=8*SCREEN_RATIO;
-        }
-    }
-
-    private ImageView loadImage(Texture texture) throws Exception{
-        Image image = new Image( new FileInputStream("./resources/assets/"+texture.getImage()), texture.getX()*SCREEN_RATIO, texture.getY()*SCREEN_RATIO,false,false);
-        ImageView im = new ImageView(image);
-        im.setX(x);
-        im.setY(y);
-        return im;
     }
 
 //    private void keyboard(Pane pane, Object doodle, Scene scene) {

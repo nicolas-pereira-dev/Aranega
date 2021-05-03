@@ -1,5 +1,17 @@
 package sample;
 
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+
 public enum Texture {
   backWallBlackHalf ("backWallBlackHalf.png", 16, 8), box ("box.png", 16, 16), coin ("coin.png",16,16), doorOpen ("doorOpen.png",32,32),
   horiozontalBeam ("horiozontalBeam.png", 48, 16), rope ("rope.png",16,48), wall ("wall.png",16,16), backWallBlack ("backWallBlack.png",16,8),
@@ -30,4 +42,5 @@ public enum Texture {
   public int getY() {
     return y;
   }
+
 }

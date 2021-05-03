@@ -8,8 +8,8 @@ public enum AraMouvement {
    AraMouvement (String image){
        this.image = image;
    }
-    public String getImage() {
+
+   public String getImage() {
         return image;
     }
-
 }
