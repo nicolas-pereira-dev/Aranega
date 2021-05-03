@@ -22,6 +22,8 @@ public class Main extends Application{
     final int SCREEN_RATIO = 3;
     int x = 0;
     int y = 0;
+    int idx = 0;
+    int wait = 0;
 
     public static void main (String args []) {
         Application.launch(args);
@@ -42,6 +44,16 @@ public class Main extends Application{
             System.exit(0);
         });
 
+        ImageView list [] = new ImageView[11];
+        x = 148;
+        y = 240;
+        for(AraMouvement ara : AraMouvement.values()){
+            list[idx] = new ImageView(new Image( new FileInputStream("./resources/assets/ara/"+ara.getImage()), 24*SCREEN_RATIO, 32*SCREEN_RATIO,false,false));
+            list[idx].setX(x);
+            list[idx++].setY(y);
+        }
+        idx = 0;
+        pane.getChildren().add(list[0]);
 
         //Timer
         Timer fall = new Timer();
@@ -49,12 +61,23 @@ public class Main extends Application{
             public void run() {
                 Platform.runLater(new Runnable() {
                     public void run() {
-//                        play(platformFile, pane, doodle);
+//                      play(platformFile, pane, doodle);
+                        if(wait>30) {
+                            pane.getChildren().remove(list[idx]);
+                            pane.getChildren().add(list[(idx + 1) % 11]);
+                            idx++;
+                            if (idx == 11)
+                                idx = 0;
+                            if (idx == 1) {
+                                wait = 0;
+                            }
+                        }
+                        wait++;
                     }
                 });
             }
         };
-        fall.schedule(task, 0, 4);
+        fall.schedule(task, 0, 80);
 
     }
 
