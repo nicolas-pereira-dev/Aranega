@@ -61,10 +61,22 @@ public class Main extends Application{
     private void keyboardEvents(Scene scene, Ara ara, TextureLoader txl) {
         scene.setOnKeyPressed( new EventHandler<KeyEvent>() {
             public void handle(KeyEvent event) {
-                if(event.getCode().equals(KeyCode.LEFT))
+                if(event.getCode().equals(KeyCode.LEFT)) {
                     ara.left(txl);
-                if(event.getCode().equals(KeyCode.RIGHT))
+                    ara.setState(State.RuningLeft);
+                }
+                if(event.getCode().equals(KeyCode.RIGHT)){
                     ara.right(txl);
+                    ara.setState(State.RuningRight);
+                }
+            }
+        });
+        scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
+            public void handle(KeyEvent event) {
+                if(event.getCode().equals(KeyCode.LEFT))
+                    ara.setState(State.StandingLeft);
+                if(event.getCode().equals(KeyCode.RIGHT))
+                    ara.setState(State.StandingRight);
             }
         });
     }
