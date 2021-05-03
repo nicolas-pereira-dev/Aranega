@@ -54,7 +54,6 @@ public class Ara {
 
     public void setState(State state) {
         if(!state.equals(this.state)) {
-            System.out.println("OK");
             this.idx = 0;
             this.wait = 0;
             this.grounded = false;
@@ -66,10 +65,8 @@ public class Ara {
         ArrayList<ImageView> floor = txl.getFloor();
         for (int i = 0; i < floor.size() && !grounded; i++) {
             grounded = (x+(X_SIZE* (1 - REDUCTION) * Main.SCREEN_RATIO) >= floor.get(i).getX() && x <= (floor.get(i).getX() + Texture.floor.getX() * Main.SCREEN_RATIO) && y + Y_SIZE * (1 - REDUCTION) * Main.SCREEN_RATIO > (floor.get(i).getY() - GRAVITY ));
-            if(grounded) {
+            if(grounded)
                 y = floor.get(i).getY() - (Y_SIZE * (1 - REDUCTION) * Main.SCREEN_RATIO);
-                System.out.println("HIT THE GOURND");
-            }
         }
         if(!grounded)
             y+= GRAVITY;
@@ -86,7 +83,7 @@ public class Ara {
     }
 
     public void jump(Pane pane, TextureLoader txl, ImageView [] list){
-        if(wait<2 || wait==4 || wait==6 || wait == 8 || wait == 10 | wait == 12 || grounded) {
+        if(wait<2 || wait==4 || wait==6 || wait == 8 || wait == 10  || grounded) {
             idx++;
             if (idx == list.length){
                 idx = 0;

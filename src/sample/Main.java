@@ -24,7 +24,7 @@ public class Main extends Application{
     public void start(Stage stage) throws Exception {
         Pane pane = new Pane();
         TextureLoader txl = new TextureLoader();
-        Ara ara = new Ara(348, 59);
+        Ara ara = new Ara(348, 459);
 
         txl.loadLevel("level1", pane);
         ara.loadAra(pane);
