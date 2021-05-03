@@ -1,21 +1,15 @@
 package sample;
 
-import java.io.*;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class Main extends Application{
@@ -37,7 +31,7 @@ public class Main extends Application{
 
         Scene scene = new Scene(pane);
 
-//        keyboard(pane, doodle, scene);
+        keyboardEvents(scene, ara, txl);
 
         stage.setScene(scene);
         stage.show();
@@ -64,31 +58,16 @@ public class Main extends Application{
 
     }
 
-//    private void keyboard(Pane pane, Object doodle, Scene scene) {
-//        scene.setOnKeyPressed( new EventHandler<KeyEvent>() {
-//            public void handle(KeyEvent event) {
-//                //Left
-//                if(event.getCode().equals(KeyCode.LEFT)){
-//                    ImageView tmp = doodle.getImageView();
-//                    doodle.left();
-//                    int idx = 0;
-//                    while (!pane.getChildren().get(idx).equals(tmp))
-//                        idx++;
-//                    pane.getChildren().set(idx, doodle.getImageView());
-//                }
-//                //Right
-//                if(event.getCode().equals(KeyCode.RIGHT)){
-//                    ImageView tmp = doodle.getImageView();
-//                    doodle.right();
-//                    int idx = 0;
-//                    while (!pane.getChildren().get(idx).equals(tmp))
-//                        idx++;
-//                    pane.getChildren().set(idx, doodle.getImageView());
-//
-//                }
-//            }
-//        });
-//    }
+    private void keyboardEvents(Scene scene, Ara ara, TextureLoader txl) {
+        scene.setOnKeyPressed( new EventHandler<KeyEvent>() {
+            public void handle(KeyEvent event) {
+                if(event.getCode().equals(KeyCode.LEFT))
+                    ara.left(txl);
+                if(event.getCode().equals(KeyCode.RIGHT))
+                    ara.right(txl);
+            }
+        });
+    }
 
 //    private void mouse(Pane pane, Object doodle, Scene scene) {
 //        scene.setOnMouseMoved(new EventHandler<MouseEvent>() {

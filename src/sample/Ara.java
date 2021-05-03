@@ -12,6 +12,8 @@ public class Ara {
     static final int X_SIZE = 24;
     static final int Y_SIZE = 32;
     static final double REDUCTION = 0.2;
+    public static final int GRAVITY = 14;
+    public static final int SPEED = 10;
 
     private ImageView list [] = new ImageView[11];
     private ImageView last;
@@ -30,15 +32,22 @@ public class Ara {
     }
 
     public void gravity(TextureLoader txl){
-        if(!grounded) {
-            y+=14;
-            ArrayList<ImageView> floor = txl.getFloor();
-            for (int i = 0; i < floor.size() && !grounded; i++) {
-                grounded = (x > floor.get(i).getX() && x < (floor.get(i).getX() + Texture.floor.getX() * Main.SCREEN_RATIO) && y + Y_SIZE * (1 - REDUCTION) * Main.SCREEN_RATIO > (floor.get(i).getY() - (Main.SCREEN_RATIO-1) ));
-                if(grounded)
-                    y = floor.get(i).getY() - (Y_SIZE * (1 - REDUCTION) * Main.SCREEN_RATIO);
-            }
+        ArrayList<ImageView> floor = txl.getFloor();
+        for (int i = 0; i < floor.size() && !grounded; i++) {
+            grounded = (x > floor.get(i).getX() && x < (floor.get(i).getX() + Texture.floor.getX() * Main.SCREEN_RATIO) && y + Y_SIZE * (1 - REDUCTION) * Main.SCREEN_RATIO > (floor.get(i).getY() - GRAVITY ));
+            if(grounded)
+                y = floor.get(i).getY() - (Y_SIZE * (1 - REDUCTION) * Main.SCREEN_RATIO);
         }
+        if(!grounded)
+            y+= GRAVITY;
+    }
+
+    public void right(TextureLoader txl){
+        x+= SPEED;
+    }
+
+    public void left(TextureLoader txl){
+        x-= SPEED;
     }
 
     public void loadAra(Pane pane) throws FileNotFoundException {
@@ -63,9 +72,10 @@ public class Ara {
             }
         }
         wait++;
-        //Change image
+        //Change Image
         pane.getChildren().remove(last);
         last = list[idx];
+        last.setX(x);
         last.setY(y);
         pane.getChildren().add(last);
     }
