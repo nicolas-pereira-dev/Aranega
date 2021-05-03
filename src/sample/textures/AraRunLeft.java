@@ -1,4 +1,4 @@
-package sample;
+package sample.textures;
 
 public enum AraRunLeft {
     araRunLeft1("araRunLeft1.png"),

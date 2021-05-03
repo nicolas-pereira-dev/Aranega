@@ -3,6 +3,7 @@ package sample;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import sample.textures.*;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -13,7 +14,7 @@ public class Ara {
     static final int Y_SIZE = 32;
     static final double REDUCTION = 0.2;
     public static final int GRAVITY = 14;
-    public static final int SPEED = 0;
+    public static int speed = 14;
 
     private ImageView imagesStandingRight[] = new ImageView[11];
     private ImageView imagesStandingLeft[] = new ImageView[11];
@@ -22,7 +23,7 @@ public class Ara {
     private ImageView last;
     private State state;
     private boolean grounded;
-    private double x;
+    public double x;
     private double y;
     private int wait;
     private int idx;
@@ -38,6 +39,14 @@ public class Ara {
 
     public State getState() {
         return state;
+    }
+
+    public void setSprint(boolean sprint){
+        if(sprint)
+            speed = speed * 2;
+        else
+            speed = speed / 2;
+
     }
 
     public void setState(State state) {
@@ -60,12 +69,14 @@ public class Ara {
             y+= GRAVITY;
     }
 
-    public void right(TextureLoader txl){
-        x+= SPEED;
+    public void right(Pane pane, TextureLoader txl){
+        run(pane, imagesRunRight);
+        x+= speed;
     }
 
-    public void left(TextureLoader txl){
-        x-= SPEED;
+    public void left(Pane pane, TextureLoader txl){
+        run(pane, imagesRunLeft);
+        x-= speed;
     }
 
     public void loadAra(Pane pane) throws FileNotFoundException {
@@ -110,10 +121,10 @@ public class Ara {
                 standing(pane, imagesStandingLeft);
                 break;
             case RuningRight:
-                run(pane, imagesRunRight);
+                right(pane, null);
                 break;
             case RuningLeft:
-                run(pane, imagesRunLeft);
+                left(pane, null);
                 break;
             default:
         }

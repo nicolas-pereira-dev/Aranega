@@ -50,6 +50,7 @@ public class Main extends Application{
 //                      play(platformFile, pane, doodle);
                         ara.gravity(txl);
                         ara.animateAra(pane);
+                        System.out.println(ara.x);
                     }
                 });
             }
@@ -61,14 +62,12 @@ public class Main extends Application{
     private void keyboardEvents(Scene scene, Ara ara, TextureLoader txl) {
         scene.setOnKeyPressed( new EventHandler<KeyEvent>() {
             public void handle(KeyEvent event) {
-                if(event.getCode().equals(KeyCode.LEFT)) {
-                    ara.left(txl);
+                if(event.getCode().equals(KeyCode.LEFT))
                     ara.setState(State.RuningLeft);
-                }
-                if(event.getCode().equals(KeyCode.RIGHT)){
-                    ara.right(txl);
+                if(event.getCode().equals(KeyCode.RIGHT))
                     ara.setState(State.RuningRight);
-                }
+                if(event.getCode().equals(KeyCode.CONTROL))
+                    ara.setSprint(true);
             }
         });
         scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
@@ -77,6 +76,8 @@ public class Main extends Application{
                     ara.setState(State.StandingLeft);
                 if(event.getCode().equals(KeyCode.RIGHT))
                     ara.setState(State.StandingRight);
+                if(event.getCode().equals(KeyCode.CONTROL))
+                    ara.setSprint(false);
             }
         });
     }
