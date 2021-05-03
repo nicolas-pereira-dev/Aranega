@@ -50,12 +50,11 @@ public class Main extends Application{
 //                      play(platformFile, pane, doodle);
                         ara.gravity(txl);
                         ara.animateAra(pane);
-                        System.out.println(ara.x);
                     }
                 });
             }
         };
-        fall.schedule(task, 0, 80);
+        fall.schedule(task, 0, 60);
 
     }
 
@@ -68,6 +67,12 @@ public class Main extends Application{
                     ara.setState(State.RuningRight);
                 if(event.getCode().equals(KeyCode.CONTROL))
                     ara.setSprint(true);
+                if(event.getCode().equals(KeyCode.SPACE)) {
+                    if(ara.getState().ordinal()%2 == 1)
+                        ara.setState(State.JumpingLeft);
+                    else
+                        ara.setState(State.JumpingRight);
+                }
             }
         });
         scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
