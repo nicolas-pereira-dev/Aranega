@@ -8,6 +8,7 @@ import sample.textures.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Ara {
     static final int X_SIZE = 24;
@@ -17,48 +18,55 @@ public class Ara {
     public static double speed = 14;
     public static double jump = 14;
 
-    private ImageView imagesStandingRight[] = new ImageView[11];
-    private ImageView imagesStandingLeft[] = new ImageView[11];
-    private ImageView imagesJumpRight[] = new ImageView[9];
-    private ImageView imagesJumpLeft[] = new ImageView[9];
-    private ImageView imagesRunRight[] = new ImageView[8];
-    private ImageView imagesRunLeft[] = new ImageView[8];
-    private ImageView last;
-    private State state;
-    private boolean grounded;
-    private double x;
-    private double y;
-    private int wait;
-    private int idx;
+    // Arrays for the different animation image set
+    ImageView imagesStandingRight[] = new ImageView[11];
+    ImageView imagesStandingLeft[] = new ImageView[11];
+    ImageView imagesJumpRight[] = new ImageView[9];
+    ImageView imagesJumpLeft[] = new ImageView[9];
+    ImageView imagesRunRight[] = new ImageView[8];
+    ImageView imagesRunLeft[] = new ImageView[8];
+
+    ImageView last;
+    Action actionMaker;
+    private HashMap<State, Boolean> states = new HashMap<State, Boolean>();
+    boolean grounded = false;
+    double x;
+    double y;
 
     Ara(int x, int y){
+        for(State state : State.values())
+            states.put(state, false);
+        states.put(State.StandingRight, true);
         this.x = x;
         this.y = y;
-        this.wait = 0;
-        this.idx = 0;
-        this.grounded = false;
-        this.state = State.StandingRight;
+        actionMaker = new Action(this);
     }
 
-    public State getState() {
-        return state;
-    }
 
     public void setSprint(boolean sprint){
         if(sprint)
             speed = speed * 1.5;
         else
             speed = speed / 1.5;
-
     }
 
-    public void setState(State state) {
-        if(!state.equals(this.state)) {
-            this.idx = 0;
-            this.wait = 0;
-            this.grounded = false;
-            this.state = state;
+    public boolean stateIsActive(State state){
+        return states.get(state);
+    }
+
+    public void changeState(State state, boolean activate) {
+        if(states.get(state) != activate){
+            if(!states.get(State.JumpingRight) && !states.get(State.JumpingLeft)) {
+                actionMaker.wait = 0;
+                actionMaker.idx = 0;
+            }
+            grounded = false;
+            states.put(state, activate);
         }
+    }
+
+    public boolean isGrounded(){
+        return grounded;
     }
 
     public void gravity(TextureLoader txl){
@@ -72,37 +80,48 @@ public class Ara {
             y+= GRAVITY;
     }
 
-    public void right(Pane pane, TextureLoader txl){
-        run(pane, imagesRunRight);
-        x+= speed;
+
+    public void animateAra(Pane pane) {
+        for(State state : State.values())
+            if(states.get(state))
+                applyAction(state, pane);
     }
 
-    public void left(Pane pane, TextureLoader txl){
-        run(pane, imagesRunLeft);
-        x-= speed;
-    }
-
-    public void jump(Pane pane, TextureLoader txl, ImageView [] list){
-        if(wait<2 || wait==4 || wait==6 || wait == 8 || wait == 10  || grounded) {
-            idx++;
-            if (idx == list.length){
-                idx = 0;
-                if(state.ordinal()%2==0)
-                    state = State.StandingRight;
-                else
-                    state = State.StandingLeft;
-            }
+    private void applyAction(State state, Pane pane){
+        switch (state){
+            case StandingRight:
+                actionMaker.standing(pane, imagesStandingRight);
+                break;
+            case StandingLeft:
+                actionMaker.standing(pane, imagesStandingLeft);
+                break;
+            case RunningRight:
+                actionMaker.right(pane, null);
+                break;
+            case RunningLeft:
+                actionMaker.left(pane, null);
+                break;
+            case JumpingRight:
+                actionMaker.jump(pane, null, imagesJumpRight);
+                break;
+            case JumpingLeft:
+                actionMaker.jump(pane, null, imagesJumpLeft);
+                break;
+            default:
         }
-        if(wait<8) {
-            y -= (GRAVITY + jump);
-            grounded = false;
-        }
-
-        wait++;
-        changeImage(pane, list);
     }
 
-    public void loadAra(Pane pane) throws FileNotFoundException {
+    public void changeImage(Pane pane, ImageView [] list, int idx) {
+        pane.getChildren().remove(last);
+        last = list[idx];
+        last.setX(x);
+        last.setY(y);
+        pane.getChildren().add(last);
+    }
+
+    public void loadAraImages(Pane pane) throws FileNotFoundException {
+        int idx = 0;
+
         for(AraStandingRight ara : AraStandingRight.values()){
             imagesStandingRight[idx] = new ImageView(new Image( new FileInputStream("./resources/assets/ara/"+ara.getImage()), X_SIZE*Main.SCREEN_RATIO*(1-REDUCTION), Y_SIZE*Main.SCREEN_RATIO*(1-REDUCTION),false,false));
             imagesStandingRight[idx].setX(x);
@@ -147,57 +166,6 @@ public class Ara {
 
         last = imagesStandingRight[0];
         pane.getChildren().add(last);
-    }
-
-    public void animateAra(Pane pane) {
-        switch (state){
-            case StandingRight:
-                standing(pane, imagesStandingRight);
-                break;
-            case StandingLeft:
-                standing(pane, imagesStandingLeft);
-                break;
-            case RuningRight:
-                right(pane, null);
-                break;
-            case RuningLeft:
-                left(pane, null);
-                break;
-            case JumpingRight:
-                jump(pane, null, imagesJumpRight);
-                break;
-            case JumpingLeft:
-                jump(pane, null, imagesJumpLeft);
-                break;
-            default:
-        }
-    }
-
-    private void changeImage(Pane pane, ImageView [] list) {
-        pane.getChildren().remove(last);
-        last = list[idx];
-        last.setX(x);
-        last.setY(y);
-        pane.getChildren().add(last);
-    }
-
-    private void standing(Pane pane, ImageView [] list) {
-        if(wait>4) {
-            idx++;
-            if (idx == list.length) {
-                idx = 0;
-                wait = 0;
-            }
-        }
-        wait++;
-        changeImage(pane, list);
-    }
-
-    private void run(Pane pane, ImageView [] list) {
-        idx++;
-        if (idx == list.length)
-            idx = 0;
-        changeImage(pane, list);
     }
 
 }

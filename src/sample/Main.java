@@ -27,7 +27,7 @@ public class Main extends Application{
         Ara ara = new Ara(348, 459);
 
         txl.loadLevel("level1", pane);
-        ara.loadAra(pane);
+        ara.loadAraImages(pane);
 
         Scene scene = new Scene(pane);
 
@@ -50,41 +50,92 @@ public class Main extends Application{
 //                      play(platformFile, pane, doodle);
                         ara.gravity(txl);
                         ara.animateAra(pane);
+                        System.out.println("========================");
+                        for(State s : State.values()){
+                            if(ara.stateIsActive(s)) System.out.println(s);
+                        }
+                        System.out.println("========================");
                     }
                 });
             }
         };
-        fall.schedule(task, 0, 60);
+        fall.schedule(task, 0, 360);
 
     }
 
     private void keyboardEvents(Scene scene, Ara ara, TextureLoader txl) {
         scene.setOnKeyPressed( new EventHandler<KeyEvent>() {
             public void handle(KeyEvent event) {
-                if(event.getCode().equals(KeyCode.LEFT))
-                    ara.setState(State.RuningLeft);
-                if(event.getCode().equals(KeyCode.RIGHT))
-                    ara.setState(State.RuningRight);
+                move(ara, event.getCode());
                 if(event.getCode().equals(KeyCode.CONTROL))
                     ara.setSprint(true);
-                if(event.getCode().equals(KeyCode.SPACE)) {
-                    if(ara.getState().ordinal()%2 == 1)
-                        ara.setState(State.JumpingLeft);
+
+                if(event.getCode().equals(KeyCode.SPACE) && ara.isGrounded()) {
+                    boolean lookRight = ara.stateIsActive(State.StandingRight) || ara.stateIsActive(State.RunningRight);
+                    if(lookRight)
+                        ara.changeState(State.JumpingRight, true);
                     else
-                        ara.setState(State.JumpingRight);
+                        ara.changeState(State.JumpingLeft, true);
                 }
+                ara.changeState(State.StandingRight, false);
+                ara.changeState(State.StandingLeft, false);
             }
         });
         scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
             public void handle(KeyEvent event) {
-                if(event.getCode().equals(KeyCode.LEFT))
-                    ara.setState(State.StandingLeft);
-                if(event.getCode().equals(KeyCode.RIGHT))
-                    ara.setState(State.StandingRight);
+                stopMove(ara, event.getCode());
                 if(event.getCode().equals(KeyCode.CONTROL))
                     ara.setSprint(false);
+//                if(event.getCode().equals(KeyCode.SPACE) && ara.isGrounded()) {
+//                    ara.actionMaker.wait = 0;
+//                    if(ara.stateIsActive(State.StandingRight) || ara.stateIsActive(State.RunningRight))
+//                        ara.changeState(State.JumpingLeft, false);
+//                    else
+//                        ara.changeState(State.JumpingRight, false);
+//                }
+
+//
+//                if (event.getCode().equals(KeyCode.LEFT)) {
+//                    ara.runningLeft = false;
+//                    if (ara.isGrounded())
+//                        ara.changeState(State.StandingLeft, true);
+//                    else
+//                        ara.changeState(State.JumpingLeft, true);
+//                }
+//                if (event.getCode().equals(KeyCode.RIGHT))
+//                    if(ara.isGrounded())
+//                        ara.changeState(State.StandingRight, true);
+//                    else
+//                        ara.changeState(State.JumpingRight, true);
+//                if(event.getCode().equals(KeyCode.CONTROL))
+//                    ara.setSprint(false);
             }
         });
+    }
+
+    private void move(Ara ara, KeyCode code) {
+        if(code.equals(KeyCode.RIGHT) || code.equals(KeyCode.LEFT)) {
+            State state = State.RunningRight;
+            if (code.equals(KeyCode.LEFT))
+                state = State.RunningLeft;
+            ara.changeState(state, true);
+        }
+    }
+
+    private void stopMove(Ara ara, KeyCode code) {
+        if(code.equals(KeyCode.RIGHT) || code.equals(KeyCode.LEFT)) {
+            State state = State.RunningRight;
+            if (code.equals(KeyCode.LEFT))
+                state = State.RunningLeft;
+            ara.changeState(state, false);
+            if (!ara.stateIsActive(State.JumpingRight) && !ara.stateIsActive(State.JumpingLeft) && !ara.stateIsActive(State.RunningRight) && !ara.stateIsActive(State.RunningLeft)) {
+                if(state.equals(State.RunningRight))
+                    ara.changeState(State.StandingRight, true);
+                else
+                    ara.changeState(State.StandingLeft, true);
+
+            }
+        }
     }
 
 //    private void mouse(Pane pane, Object doodle, Scene scene) {
