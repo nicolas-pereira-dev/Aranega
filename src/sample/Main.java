@@ -59,7 +59,7 @@ public class Main extends Application{
                 });
             }
         };
-        fall.schedule(task, 0, 360);
+        fall.schedule(task, 0, 60);
 
     }
 
@@ -70,7 +70,7 @@ public class Main extends Application{
                 if(event.getCode().equals(KeyCode.CONTROL))
                     ara.setSprint(true);
 
-                if(event.getCode().equals(KeyCode.SPACE) && ara.isGrounded()) {
+                if(event.getCode().equals(KeyCode.SPACE) && ara.grounded) {
                     boolean lookRight = ara.stateIsActive(State.StandingRight) || ara.stateIsActive(State.RunningRight);
                     if(lookRight)
                         ara.changeState(State.JumpingRight, true);

@@ -58,7 +58,7 @@ public class TextureLoader {
         ImageView im = new ImageView(image);
         im.setX(x);
         im.setY(y);
-        if(texture.equals(Texture.floor))
+        if(texture.equals(Texture.floor) || texture.equals(Texture.table))
             floor.add(im);
         return im;
     }

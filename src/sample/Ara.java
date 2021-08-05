@@ -56,17 +56,13 @@ public class Ara {
 
     public void changeState(State state, boolean activate) {
         if(states.get(state) != activate){
-            if(!states.get(State.JumpingRight) && !states.get(State.JumpingLeft)) {
-                actionMaker.wait = 0;
-                actionMaker.idx = 0;
-            }
+            actionMaker.runAnimation.reset();
+            actionMaker.standingAnimation.reset();
+            if(!states.get(State.JumpingRight) && !states.get(State.JumpingLeft))
+                actionMaker.jumpAnimation.reset();
             grounded = false;
             states.put(state, activate);
         }
-    }
-
-    public boolean isGrounded(){
-        return grounded;
     }
 
     public void gravity(TextureLoader txl){
